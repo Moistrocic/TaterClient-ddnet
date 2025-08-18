@@ -208,4 +208,6 @@ tc_color_freeze_darken
 tc_color_freeze_feet
 tc_spec_menu_ID
 tc_limit_mouse_to_screen
+
+ext_copy_cursor
 ```

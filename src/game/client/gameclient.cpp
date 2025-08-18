@@ -3445,8 +3445,11 @@ void CGameClient::ConchainSpecialDummyInfoupdate(IConsole::IResult *pResult, voi
 
 void CGameClient::ConchainSpecialDummy(IConsole::IResult *pResult, void *pUserData, IConsole::FCommandCallback pfnCallback, void *pCallbackUserData)
 {
+	// EXT
 	CGameClient *pSelf = (CGameClient *) pUserData;
-	pSelf->m_Controls.m_aMousePos[!g_Config.m_ClDummy] = pSelf->m_Controls.m_aMousePos[g_Config.m_ClDummy];
+	if (g_Config.m_EXTCopyCursor == 1) {
+		pSelf->m_Controls.m_aMousePos[!g_Config.m_ClDummy] = pSelf->m_Controls.m_aMousePos[g_Config.m_ClDummy];
+	}
 
 	pfnCallback(pResult, pCallbackUserData);
 	if(pResult->NumArguments())

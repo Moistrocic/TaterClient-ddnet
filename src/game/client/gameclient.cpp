@@ -3450,7 +3450,11 @@ void CGameClient::ConchainSpecialDummy(IConsole::IResult *pResult, void *pUserDa
 	if (g_Config.m_EXTCopyCursor == 1) {
 		pSelf->m_Controls.m_aMousePos[!g_Config.m_ClDummy] = pSelf->m_Controls.m_aMousePos[g_Config.m_ClDummy];
 	}
-
+	if (g_Config.m_EXTCopyMovement == 1) {
+		pSelf->m_Controls.m_aInputDirectionLeft[!g_Config.m_ClDummy] = pSelf->m_Controls.m_aInputDirectionLeft[g_Config.m_ClDummy];
+		pSelf->m_Controls.m_aInputDirectionRight[!g_Config.m_ClDummy] = pSelf->m_Controls.m_aInputDirectionRight[g_Config.m_ClDummy];
+	}
+	
 	pfnCallback(pResult, pCallbackUserData);
 	if(pResult->NumArguments())
 	{

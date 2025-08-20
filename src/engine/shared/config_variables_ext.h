@@ -8,3 +8,4 @@
 #endif
 
 MACRO_CONFIG_INT(EXTCopyCursor, ext_copy_cursor, 0, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Copy the cursor when switching between the player and the dummy. (0 - off, 1 - on)")
+MACRO_CONFIG_INT(EXTCopyMovement, ext_copy_movement, 0, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Copy movement state when switching between the original and the dummy. (0 - off, 1 - on)")

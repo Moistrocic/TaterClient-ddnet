@@ -2482,6 +2482,8 @@ if(CLIENT)
     components/effects.h
     components/emoticon.cpp
     components/emoticon.h
+    components/ext/ext.cpp
+    components/ext/ext.h
     components/flow.cpp
     components/flow.h
     components/freezebars.cpp

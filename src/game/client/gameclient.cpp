@@ -79,6 +79,9 @@
 #include "prediction/entities/character.h"
 #include "prediction/entities/projectile.h"
 
+// EXT
+#include "game/client/components/ext/ext.h"
+
 using namespace std::chrono_literals;
 
 const char *CGameClient::Version() const { return GAME_VERSION; }
@@ -3445,16 +3448,17 @@ void CGameClient::ConchainSpecialDummyInfoupdate(IConsole::IResult *pResult, voi
 
 void CGameClient::ConchainSpecialDummy(IConsole::IResult *pResult, void *pUserData, IConsole::FCommandCallback pfnCallback, void *pCallbackUserData)
 {
-	// EXT
+	// EXTCopyCursor
 	CGameClient *pSelf = (CGameClient *) pUserData;
 	if (g_Config.m_EXTCopyCursor == 1) {
 		pSelf->m_Controls.m_aMousePos[!g_Config.m_ClDummy] = pSelf->m_Controls.m_aMousePos[g_Config.m_ClDummy];
 	}
-	if (g_Config.m_EXTCopyMovement == 1) {
+	// EXTCopyMovement
+	if (g_Config.m_EXTCopyMovement == 1 && CEXT::LRKeyIsPressed((CInput*)pSelf->m_pInput)) {
 		pSelf->m_Controls.m_aInputDirectionLeft[!g_Config.m_ClDummy] = pSelf->m_Controls.m_aInputDirectionLeft[g_Config.m_ClDummy];
 		pSelf->m_Controls.m_aInputDirectionRight[!g_Config.m_ClDummy] = pSelf->m_Controls.m_aInputDirectionRight[g_Config.m_ClDummy];
 	}
-	
+
 	pfnCallback(pResult, pCallbackUserData);
 	if(pResult->NumArguments())
 	{

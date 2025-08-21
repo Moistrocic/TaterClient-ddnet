@@ -10,6 +10,9 @@
 #include <game/client/components/console.h>
 #include <game/client/gameclient.h>
 
+// EXT
+#include "game/client/components/ext/ext.h"
+
 static constexpr LOG_COLOR BIND_PRINT_COLOR{255, 255, 204};
 
 bool CBinds::CBindsSpecial::OnInput(const IInput::CEvent &Event)
@@ -54,10 +57,16 @@ void CBinds::Bind(int KeyId, const char *pStr, bool FreeOnly, int ModifierCombin
 	GetKeyBindModifiersName(ModifierCombination, aModifiers, sizeof(aModifiers));
 	if(!pStr[0])
 	{
+		if (strcmp(pStr, "+left") == 0 || strcmp(pStr, "+right") == 0) {
+			CEXT::RemoveMovementKey(pStr, KeyId);
+		}
 		log_info_color(BIND_PRINT_COLOR, "binds", "unbound %s%s", aModifiers, Input()->KeyName(KeyId));
 	}
 	else
 	{
+		if (strcmp(pStr, "+left") == 0 || strcmp(pStr, "+right") == 0) {
+			CEXT::AddMovementKey(pStr, KeyId);
+		}
 		int Size = str_length(pStr) + 1;
 		m_aapKeyBindings[ModifierCombination][KeyId] = (char *)malloc(Size);
 		str_copy(m_aapKeyBindings[ModifierCombination][KeyId], pStr, Size);

@@ -76,7 +76,7 @@ public:
 		MAX_VERTICES = 32 * 1024,
 	};
 
-	enum ECommandBufferCMD
+	enum
 	{
 		// command groups
 		CMDGROUP_CORE = 0, // commands that everyone has to implement
@@ -84,7 +84,10 @@ public:
 		CMDGROUP_PLATFORM_SDL = 20000,
 
 		CMD_FIRST = CMDGROUP_CORE,
+	};
 
+	enum ECommandBufferCMD
+	{
 		// synchronization
 		CMD_SIGNAL = CMD_FIRST,
 
@@ -143,7 +146,10 @@ public:
 	{
 		TEXFORMAT_INVALID = 0,
 		TEXFORMAT_RGBA,
+	};
 
+	enum
+	{
 		TEXFLAG_NOMIPMAPS = 1,
 		TEXFLAG_TO_3D_TEXTURE = (1 << 3),
 		TEXFLAG_TO_2D_ARRAY_TEXTURE = (1 << 4),
@@ -624,10 +630,8 @@ public:
 		return true;
 	}
 
-	SCommand *Head()
-	{
-		return m_pCmdBufferHead;
-	}
+	const SCommand *Head() const { return m_pCmdBufferHead; }
+	SCommand *Head() { return m_pCmdBufferHead; }
 
 	void Reset()
 	{
@@ -647,10 +651,10 @@ public:
 
 enum EGraphicsBackendErrorCodes
 {
-	GRAPHICS_BACKEND_ERROR_CODE_UNKNOWN = -1,
 	GRAPHICS_BACKEND_ERROR_CODE_NONE = 0,
 	GRAPHICS_BACKEND_ERROR_CODE_GL_CONTEXT_FAILED,
 	GRAPHICS_BACKEND_ERROR_CODE_GL_VERSION_FAILED,
+	GRAPHICS_BACKEND_ERROR_CODE_GLEW_INIT_FAILED,
 	GRAPHICS_BACKEND_ERROR_CODE_SDL_INIT_FAILED,
 	GRAPHICS_BACKEND_ERROR_CODE_SDL_SCREEN_REQUEST_FAILED,
 	GRAPHICS_BACKEND_ERROR_CODE_SDL_SCREEN_INFO_REQUEST_FAILED,
@@ -873,7 +877,7 @@ class CGraphics_Threaded : public IEngineGraphics
 
 	template<typename TName>
 	void AddCmd(
-		TName &Cmd, std::function<bool()> FailFunc = [] { return true; })
+		TName &Cmd, const std::function<bool()> &FailFunc = [] { return true; })
 	{
 		if(m_pCommandBuffer->AddCommandUnsafe(Cmd))
 			return;
@@ -1108,6 +1112,29 @@ public:
 	void RenderQuadContainerEx(int ContainerIndex, int QuadOffset, int QuadDrawNum, float X, float Y, float ScaleX = 1.f, float ScaleY = 1.f) override;
 	void RenderQuadContainerAsSprite(int ContainerIndex, int QuadOffset, float X, float Y, float ScaleX = 1.f, float ScaleY = 1.f) override;
 	void RenderQuadContainerAsSpriteMultiple(int ContainerIndex, int QuadOffset, int DrawCount, SRenderSpriteInfo *pRenderInfo) override;
+
+	// sprites
+private:
+	vec2 m_SpriteScale = vec2(-1.0f, -1.0f);
+
+protected:
+	void SelectSprite(const CDataSprite *pSprite, int Flags);
+
+public:
+	void SelectSprite(int Id, int Flags = 0) override;
+	void SelectSprite7(int Id, int Flags = 0) override;
+
+	void GetSpriteScale(const CDataSprite *pSprite, float &ScaleX, float &ScaleY) const override;
+	void GetSpriteScale(int Id, float &ScaleX, float &ScaleY) const override;
+	void GetSpriteScaleImpl(int Width, int Height, float &ScaleX, float &ScaleY) const override;
+
+	void DrawSprite(float x, float y, float Size) override;
+	void DrawSprite(float x, float y, float ScaledWidth, float ScaledHeight) override;
+
+	int QuadContainerAddSprite(int QuadContainerIndex, float x, float y, float Size) override;
+	int QuadContainerAddSprite(int QuadContainerIndex, float Size) override;
+	int QuadContainerAddSprite(int QuadContainerIndex, float Width, float Height) override;
+	int QuadContainerAddSprite(int QuadContainerIndex, float X, float Y, float Width, float Height) override;
 
 	template<typename TName>
 	void FlushVerticesImpl(bool KeepVertices, int &PrimType, size_t &PrimCount, size_t &NumVerts, TName &Command, size_t VertSize)

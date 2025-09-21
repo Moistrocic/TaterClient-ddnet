@@ -19,14 +19,14 @@ class CLayerTele : public CLayerTiles
 public:
 	CLayerTele(CEditor *pEditor, int w, int h);
 	CLayerTele(const CLayerTele &Other);
-	~CLayerTele();
+	~CLayerTele() override;
 
 	CTeleTile *m_pTeleTile;
 	unsigned char m_TeleNum;
 	unsigned char m_TeleCheckpointNum;
 
 	void Resize(int NewW, int NewH) override;
-	void Shift(int Direction) override;
+	void Shift(EShiftDirection Direction) override;
 	[[nodiscard]] bool IsEmpty() const override;
 	void BrushDraw(std::shared_ptr<CLayer> pBrush, vec2 WorldPos) override;
 	void BrushFlipX() override;
@@ -41,7 +41,7 @@ public:
 	ivec2 m_GotoTeleLastPos;
 
 	EditorTileStateChangeHistory<STeleTileStateChange> m_History;
-	inline void ClearHistory() override
+	void ClearHistory() override
 	{
 		CLayerTiles::ClearHistory();
 		m_History.clear();

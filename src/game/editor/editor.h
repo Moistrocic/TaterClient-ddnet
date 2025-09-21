@@ -6,7 +6,6 @@
 #include <base/bezier.h>
 #include <base/system.h>
 
-#include <game/client/render.h>
 #include <game/client/ui.h>
 #include <game/client/ui_listbox.h>
 #include <game/mapitems.h>
@@ -26,6 +25,8 @@
 #include <game/editor/mapitems/layer_tiles.h>
 #include <game/editor/mapitems/layer_tune.h>
 #include <game/editor/mapitems/map.h>
+
+#include <game/map/render_interfaces.h>
 
 #include <engine/console.h>
 #include <engine/editor.h>
@@ -62,8 +63,12 @@ enum
 	MODE_LAYERS = 0,
 	MODE_IMAGES,
 	MODE_SOUNDS,
-	NUM_MODES,
 
+	NUM_MODES,
+};
+
+enum
+{
 	DIALOG_NONE = 0,
 	DIALOG_FILE,
 	DIALOG_MAPSETTINGS_ERROR,
@@ -106,7 +111,7 @@ enum
 	PROPTYPE_AUTOMAPPER_REFERENCE,
 };
 
-class CEditor : public IEditor
+class CEditor : public IEditor, public IEnvelopeEval
 {
 	class IInput *m_pInput = nullptr;
 	class IClient *m_pClient = nullptr;
@@ -118,7 +123,7 @@ class CEditor : public IEditor
 	class ITextRender *m_pTextRender = nullptr;
 	class ISound *m_pSound = nullptr;
 	class IStorage *m_pStorage = nullptr;
-	CRenderTools m_RenderTools;
+	CRenderMap m_RenderMap;
 	CUi m_UI;
 
 	std::vector<std::reference_wrapper<CEditorComponent>> m_vComponents;
@@ -148,7 +153,7 @@ class CEditor : public IEditor
 	};
 
 	std::shared_ptr<CLayerGroup> m_apSavedBrushes[10];
-	static inline constexpr ColorRGBA ms_DefaultPropColor = ColorRGBA(1, 1, 1, 0.5f);
+	static constexpr ColorRGBA ms_DefaultPropColor = ColorRGBA(1, 1, 1, 0.5f);
 
 public:
 	class IInput *Input() const { return m_pInput; }
@@ -162,7 +167,7 @@ public:
 	class ITextRender *TextRender() const { return m_pTextRender; }
 	class IStorage *Storage() const { return m_pStorage; }
 	CUi *Ui() { return &m_UI; }
-	CRenderTools *RenderTools() { return &m_RenderTools; }
+	CRenderMap *RenderMap() { return &m_RenderMap; }
 
 	CMapView *MapView() { return &m_MapView; }
 	const CMapView *MapView() const { return &m_MapView; }
@@ -241,7 +246,6 @@ public:
 		m_AnimateSpeed = 1;
 		m_AnimateUpdatePopup = false;
 
-		m_ShowEnvelopePreview = SHOWENV_NONE;
 		m_SelectedQuadEnvelope = -1;
 
 		m_vSelectedEnvelopePoints = {};
@@ -395,7 +399,7 @@ public:
 	bool IsTangentInSelected() const;
 	bool IsTangentOutSelected() const;
 	bool IsTangentSelected() const;
-	std::pair<int, int> EnvGetSelectedTimeAndValue() const;
+	std::pair<CFixedTime, int> EnvGetSelectedTimeAndValue() const;
 
 	template<typename E>
 	SEditResult<E> DoPropertiesWithState(CUIRect *pToolbox, CProperty *pProps, int *pIds, int *pNewVal, const std::vector<ColorRGBA> &vColors = {});
@@ -511,13 +515,14 @@ public:
 	float m_aExtraEditorSplits[NUM_EXTRAEDITORS] = {250.0f, 250.0f, 250.0f};
 	float m_ToolBoxWidth = 100.0f;
 
-	enum EShowEnvelope
+	bool m_ShowEnvelopePreview = false;
+	enum class EEnvelopePreview
 	{
-		SHOWENV_NONE = 0,
-		SHOWENV_SELECTED,
-		SHOWENV_ALL
+		NONE,
+		SELECTED,
+		ALL,
 	};
-	EShowEnvelope m_ShowEnvelopePreview;
+	EEnvelopePreview m_ActiveEnvelopePreview = EEnvelopePreview::NONE;
 	bool m_ShowPicker;
 
 	std::vector<int> m_vSelectedLayers;
@@ -571,7 +576,7 @@ public:
 
 	int m_ShiftBy;
 
-	static void EnvelopeEval(int TimeOffsetMillis, int Env, ColorRGBA &Result, size_t Channels, void *pUser);
+	void EnvelopeEval(int TimeOffsetMillis, int Env, ColorRGBA &Result, size_t Channels) override;
 
 	CLineInputBuffered<256> m_SettingsCommandInput;
 	CMapSettingsBackend m_MapSettingsBackend;
@@ -848,7 +853,9 @@ private:
 };
 
 // make sure to inline this function
+inline const class IGraphics *CLayer::Graphics() const { return m_pEditor->Graphics(); }
 inline class IGraphics *CLayer::Graphics() { return m_pEditor->Graphics(); }
+inline const class ITextRender *CLayer::TextRender() const { return m_pEditor->TextRender(); }
 inline class ITextRender *CLayer::TextRender() { return m_pEditor->TextRender(); }
 
 #endif

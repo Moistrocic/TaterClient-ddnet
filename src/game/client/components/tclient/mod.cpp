@@ -4,7 +4,6 @@
 
 #include <base/system.h>
 
-#include <game/generated/protocol.h>
 #include <game/localization.h>
 
 #include "mod.h"
@@ -35,7 +34,12 @@ void CMod::OnRender()
 	if(Client()->State() == IClient::STATE_ONLINE && m_ModWeaponActiveId >= 0 && m_ModWeaponActiveTimeLeft > 0.0f)
 	{
 		const auto &Player = GameClient()->m_aClients[m_ModWeaponActiveId];
-		if(!Player.m_Active || g_Config.m_TcModWeaponCommand[0] == '\0') // Cancel if not active or empty command
+		if(
+			GameClient()->m_Menus.IsActive() || // In escape
+			GameClient()->m_Chat.IsActive() || // In chat
+			GameClient()->m_GameConsole.IsActive() || // In console
+			!Player.m_Active || // In spectator
+			g_Config.m_TcModWeaponCommand[0] == '\0') // Not active or empty command
 		{
 			m_ModWeaponActiveId = -1;
 		}
@@ -59,7 +63,7 @@ void CMod::OnRender()
 				STextContainerIndex TextContainer;
 				TextContainer.Reset();
 				CTextCursor Cursor;
-				TextRender()->SetCursor(&Cursor, 0.0f, 0.0f, 25.0f, TEXTFLAG_RENDER);
+				Cursor.m_FontSize = 25.0f;
 				TextRender()->SetRenderFlags(TEXT_RENDER_FLAG_NO_PIXEL_ALIGNMENT | TEXT_RENDER_FLAG_ONE_TIME_USE);
 				TextRender()->CreateTextContainer(TextContainer, &Cursor, aBuf);
 				TextRender()->SetRenderFlags(0);
@@ -78,7 +82,7 @@ void CMod::OnRender()
 				STextContainerIndex TextContainer;
 				TextContainer.Reset();
 				CTextCursor Cursor;
-				TextRender()->SetCursor(&Cursor, 0.0f, 0.0f, 15.0f, TEXTFLAG_RENDER);
+				Cursor.m_FontSize = 15.0f;
 				TextRender()->SetRenderFlags(TEXT_RENDER_FLAG_NO_PIXEL_ALIGNMENT | TEXT_RENDER_FLAG_ONE_TIME_USE);
 				TextRender()->CreateTextContainer(TextContainer, &Cursor, g_Config.m_TcModWeaponCommand);
 				TextRender()->SetRenderFlags(0);
@@ -88,7 +92,6 @@ void CMod::OnRender()
 					TextRender()->RenderTextContainer(TextContainer,
 						ColorRGBA(1.0f, 1.0f, 1.0f, 1.0f), TextRender()->DefaultTextOutlineColor(),
 						Player.m_RenderPos.x - BoundingBox.m_W / 2.0f, Y);
-					Y += BoundingBox.m_H + 15.0f;
 				}
 				TextRender()->DeleteTextContainer(TextContainer);
 			}

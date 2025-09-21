@@ -19,13 +19,13 @@ class CLayerTune : public CLayerTiles
 public:
 	CLayerTune(CEditor *pEditor, int w, int h);
 	CLayerTune(const CLayerTune &Other);
-	~CLayerTune();
+	~CLayerTune() override;
 
 	CTuneTile *m_pTuneTile;
 	unsigned char m_TuningNumber;
 
 	void Resize(int NewW, int NewH) override;
-	void Shift(int Direction) override;
+	void Shift(EShiftDirection Direction) override;
 	[[nodiscard]] bool IsEmpty() const override;
 	void BrushDraw(std::shared_ptr<CLayer> pBrush, vec2 WorldPos) override;
 	void BrushFlipX() override;
@@ -40,7 +40,7 @@ public:
 	ivec2 m_GotoTuneLastPos;
 
 	EditorTileStateChangeHistory<STuneTileStateChange> m_History;
-	inline void ClearHistory() override
+	void ClearHistory() override
 	{
 		CLayerTiles::ClearHistory();
 		m_History.clear();

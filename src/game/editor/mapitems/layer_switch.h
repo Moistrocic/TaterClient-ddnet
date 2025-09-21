@@ -21,14 +21,14 @@ class CLayerSwitch : public CLayerTiles
 public:
 	CLayerSwitch(CEditor *pEditor, int w, int h);
 	CLayerSwitch(const CLayerSwitch &Other);
-	~CLayerSwitch();
+	~CLayerSwitch() override;
 
 	CSwitchTile *m_pSwitchTile;
 	unsigned char m_SwitchNumber;
 	unsigned char m_SwitchDelay;
 
 	void Resize(int NewW, int NewH) override;
-	void Shift(int Direction) override;
+	void Shift(EShiftDirection Direction) override;
 	[[nodiscard]] bool IsEmpty() const override;
 	void BrushDraw(std::shared_ptr<CLayer> pBrush, vec2 WorldPos) override;
 	void BrushFlipX() override;
@@ -43,7 +43,7 @@ public:
 	ivec2 m_GotoSwitchLastPos;
 
 	EditorTileStateChangeHistory<SSwitchTileStateChange> m_History;
-	inline void ClearHistory() override
+	void ClearHistory() override
 	{
 		CLayerTiles::ClearHistory();
 		m_History.clear();

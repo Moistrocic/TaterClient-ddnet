@@ -11,8 +11,6 @@
 
 #include "countryflags.h"
 
-#include <game/client/render.h>
-
 void CCountryFlags::LoadCountryflagsIndexfile()
 {
 	const char *pFilename = "countryflags/index.txt";
@@ -113,14 +111,14 @@ void CCountryFlags::OnInit()
 		Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "countryflags", "failed to load country flags. folder='countryflags/'");
 		CCountryFlag DummyEntry;
 		DummyEntry.m_CountryCode = -1;
-		mem_zero(DummyEntry.m_aCountryCodeString, sizeof(DummyEntry.m_aCountryCodeString));
+		DummyEntry.m_aCountryCodeString[0] = '\0';
 		m_vCountryFlags.push_back(DummyEntry);
 	}
 
 	m_FlagsQuadContainerIndex = Graphics()->CreateQuadContainer(false);
 	Graphics()->SetColor(1.f, 1.f, 1.f, 1.f);
 	Graphics()->QuadsSetSubset(0, 0, 1, 1);
-	RenderTools()->QuadContainerAddSprite(m_FlagsQuadContainerIndex, 0, 0, 1, 1);
+	Graphics()->QuadContainerAddSprite(m_FlagsQuadContainerIndex, 0, 0, 1, 1);
 	Graphics()->QuadContainerUpload(m_FlagsQuadContainerIndex);
 }
 

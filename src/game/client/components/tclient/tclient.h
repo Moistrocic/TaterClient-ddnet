@@ -3,11 +3,19 @@
 
 #include <game/client/component.h>
 
+#include <engine/client/enums.h>
+
 #include <engine/shared/console.h>
 #include <engine/shared/http.h>
 
+#include <deque>
+
 class CTClient : public CComponent
 {
+	std::deque<vec2> m_aAirRescuePositions[NUM_DUMMIES];
+	void AirRescue();
+	static void ConAirRescue(IConsole::IResult *pResult, void *pUserData);
+
 	static void ConCalc(IConsole::IResult *pResult, void *pUserData);
 	static void ConRandomTee(IConsole::IResult *pResult, void *pUserData);
 	static void ConchainRandomColor(IConsole::IResult *pResult, void *pUserData, IConsole::FCommandCallback pfnCallback, void *pCallbackUserData);

@@ -9,7 +9,6 @@
 class CMod : public CComponent
 {
 public:
-
 	int m_ModWeaponActiveId = -1;
 	float m_ModWeaponActiveTimeLeft;
 	void ModWeapon(int Id);

@@ -74,6 +74,11 @@ protected:
 	class CRenderTools *RenderTools() const;
 
 	/**
+	 * Get the render map interface.
+	 */
+	class CRenderMap *RenderMap() const;
+
+	/**
 	 * Get the config manager interface.
 	 */
 	class IConfigManager *ConfigManager() const;
@@ -159,11 +164,6 @@ private:
 class CComponent : public CComponentInterfaces
 {
 public:
-	/**
-	 * The component virtual destructor.
-	 */
-	virtual ~CComponent() = default;
-
 	/**
 	 * Gets the size of the non-abstract component.
 	 */

@@ -455,6 +455,36 @@ public:
 
 // ***** TClient Parts *****
 
+class CNamePlatePartCountry : public CNamePlatePart
+{
+protected:
+	static constexpr float FLAG_WIDTH = 128.0f;
+	static constexpr float FLAG_HEIGHT = 64.0f;
+	static constexpr float FLAG_RATIO = FLAG_HEIGHT / FLAG_WIDTH;
+	int m_CountryCode = -1;
+	float m_Alpha = 1.0f;
+
+public:
+	friend class CGameClient;
+	void Update(CGameClient &This, const CNamePlateData &Data) override
+	{
+		m_Visible = g_Config.m_TcNameplateCountry;
+		if(!m_Visible)
+			return;
+		m_Alpha = Data.m_Color.a;
+		m_Size = vec2(Data.m_FontSize / FLAG_RATIO, Data.m_FontSize);
+		m_CountryCode = This.m_aClients[Data.m_ClientId].m_Country;
+	}
+	void Render(CGameClient &This, vec2 Pos) const override
+	{
+		This.m_CountryFlags.Render(m_CountryCode, ColorRGBA(1.0f, 1.0f, 1.0f, m_Alpha),
+			Pos.x - m_Size.x / 2.0f, Pos.y - m_Size.y / 2.0f,
+			m_Size.x, m_Size.y);
+	}
+	CNamePlatePartCountry(CGameClient &This) :
+		CNamePlatePart(This) {}
+};
+
 class CNamePlatePartPing : public CNamePlatePart
 {
 protected:
@@ -476,10 +506,10 @@ public:
 		m_Radius = Data.m_FontSize / 2.5f;
 		m_Size = vec2(m_Radius, m_Radius) * 2.0f;
 		m_Visible = Data.m_InGame ? (
-						    This.Client()->State() != IClient::STATE_DEMOPLAYBACK && ((Data.m_ShowName && g_Config.m_TcPingNameCircle > 0) ||
+						    This.Client()->State() != IClient::STATE_DEMOPLAYBACK && ((Data.m_ShowName && g_Config.m_TcNameplatePingCircle > 0) ||
 														     (This.m_Scoreboard.IsActive() && !This.m_Snap.m_apPlayerInfos[Data.m_ClientId]->m_Local))) :
 					    (
-						    (Data.m_ShowName && g_Config.m_TcPingNameCircle > 0));
+						    (Data.m_ShowName && g_Config.m_TcNameplatePingCircle > 0));
 		if(!m_Visible)
 			return;
 		int ping = Data.m_InGame ? This.m_Snap.m_apPlayerInfos[Data.m_ClientId]->m_Latency : (1 + Data.m_ClientId) * 25;
@@ -506,7 +536,7 @@ private:
 protected:
 	bool UpdateNeeded(CGameClient &This, const CNamePlateData &Data) override
 	{
-		m_Visible = Data.m_InGame ? g_Config.m_TcShowSkinName > (This.m_Snap.m_apPlayerInfos[Data.m_ClientId]->m_Local ? 1 : 0) : g_Config.m_TcShowSkinName > 0;
+		m_Visible = Data.m_InGame ? g_Config.m_TcNameplateSkins > (This.m_Snap.m_apPlayerInfos[Data.m_ClientId]->m_Local ? 1 : 0) : g_Config.m_TcNameplateSkins > 0;
 		if(!m_Visible)
 			return false;
 		m_Color = Data.m_Color;
@@ -628,6 +658,7 @@ private:
 			return;
 		m_Inited = true;
 
+		AddPart<CNamePlatePartCountry>(This); // TClient
 		AddPart<CNamePlatePartPing>(This); // TClient
 		AddPart<CNamePlatePartIgnoreMark>(This); // TClient
 		AddPart<CNamePlatePartFriendMark>(This);

@@ -37,3 +37,9 @@ bool CEXT::LRKeyIsPressed(CInput *pInput) {
 	});
 	return isLeftKeyPressed || isRightKeyPressed;
 }
+
+void CEXT::IncrementIfOdd(int *pNumber) {
+    if (*pNumber & 1) {
+	    (*pNumber)++;
+    }
+}

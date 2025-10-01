@@ -5,4 +5,5 @@
 ```
 ext_copy_cursor - 切换本体/分身时复制准星
 ext_copy_movement - 切换本体/分身时延续移动状态
+ext_fix_dummy_hammer - 开启分身同步且出锤后，在切换分身时不卡锤
 ```

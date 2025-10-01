@@ -281,6 +281,10 @@ int CControls::SnapInput(int *pData)
 			pDummyInput->m_PrevWeapon += m_aInputData[g_Config.m_ClDummy].m_PrevWeapon - m_aLastData[g_Config.m_ClDummy].m_PrevWeapon;
 
 			m_aInputData[!g_Config.m_ClDummy] = *pDummyInput;
+			// EXTFixDummyHammer
+			if (g_Config.m_EXTFixDummyHammer == 1) {
+				m_aLastData[!g_Config.m_ClDummy] = *pDummyInput;
+			}
 		}
 
 		if(g_Config.m_ClDummyControl)

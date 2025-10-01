@@ -16,6 +16,7 @@ public:
 	static void AddMovementKey(const char *pStr, int KeyId);
 	static void RemoveMovementKey(const char *pStr, int KeyId);
 	static bool LRKeyIsPressed(CInput *pInput);
+	static void IncrementIfOdd(int *pNumber);
 };
 
 #endif

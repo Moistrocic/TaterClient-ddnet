@@ -3458,7 +3458,14 @@ void CGameClient::ConchainSpecialDummy(IConsole::IResult *pResult, void *pUserDa
 		pSelf->m_Controls.m_aInputDirectionLeft[!g_Config.m_ClDummy] = pSelf->m_Controls.m_aInputDirectionLeft[g_Config.m_ClDummy];
 		pSelf->m_Controls.m_aInputDirectionRight[!g_Config.m_ClDummy] = pSelf->m_Controls.m_aInputDirectionRight[g_Config.m_ClDummy];
 	}
-
+	// EXTFixDummyHammer
+	if (g_Config.m_EXTFixDummyHammer == 1) {
+		CEXT::IncrementIfOdd(&(pSelf->m_Controls.m_aInputData[g_Config.m_ClDummy].m_Fire));
+		CEXT::IncrementIfOdd(&(pSelf->m_Controls.m_aInputData[!g_Config.m_ClDummy].m_Fire));
+		CEXT::IncrementIfOdd(&(pSelf->m_Controls.m_aLastData[g_Config.m_ClDummy].m_Fire));
+		CEXT::IncrementIfOdd(&(pSelf->m_Controls.m_aLastData[!g_Config.m_ClDummy].m_Fire));
+	}
+	
 	pfnCallback(pResult, pCallbackUserData);
 	if(pResult->NumArguments())
 	{

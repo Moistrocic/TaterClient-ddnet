@@ -80,7 +80,7 @@
 #include "prediction/entities/projectile.h"
 
 // EXT
-#include "game/client/components/ext/ext.h"
+#include "components/ext/ext.h"
 
 using namespace std::chrono_literals;
 
@@ -3449,23 +3449,23 @@ void CGameClient::ConchainSpecialDummyInfoupdate(IConsole::IResult *pResult, voi
 void CGameClient::ConchainSpecialDummy(IConsole::IResult *pResult, void *pUserData, IConsole::FCommandCallback pfnCallback, void *pCallbackUserData)
 {
 	// EXTCopyCursor
-	CGameClient *pSelf = (CGameClient *) pUserData;
-	if (g_Config.m_EXTCopyCursor == 1) {
+	CGameClient *pSelf = (CGameClient *)pUserData;
+	if(g_Config.m_EXTCopyCursor == 1)
 		pSelf->m_Controls.m_aMousePos[!g_Config.m_ClDummy] = pSelf->m_Controls.m_aMousePos[g_Config.m_ClDummy];
-	}
 	// EXTCopyMovement
-	if (g_Config.m_EXTCopyMovement == 1 && CEXT::LRKeyIsPressed((CInput*)pSelf->m_pInput)) {
+	if(g_Config.m_EXTCopyMovement == 1 && CEXT::LRKeyIsPressed((CInput *)pSelf->m_pInput))
+	{
 		pSelf->m_Controls.m_aInputDirectionLeft[!g_Config.m_ClDummy] = pSelf->m_Controls.m_aInputDirectionLeft[g_Config.m_ClDummy];
 		pSelf->m_Controls.m_aInputDirectionRight[!g_Config.m_ClDummy] = pSelf->m_Controls.m_aInputDirectionRight[g_Config.m_ClDummy];
 	}
 	// EXTFixDummyHammer
-	if (g_Config.m_EXTFixDummyHammer == 1) {
+	if(g_Config.m_EXTFixDummyHammer == 1)
+	{
 		CEXT::IncrementIfOdd(&(pSelf->m_Controls.m_aInputData[g_Config.m_ClDummy].m_Fire));
 		CEXT::IncrementIfOdd(&(pSelf->m_Controls.m_aInputData[!g_Config.m_ClDummy].m_Fire));
 		CEXT::IncrementIfOdd(&(pSelf->m_Controls.m_aLastData[g_Config.m_ClDummy].m_Fire));
 		CEXT::IncrementIfOdd(&(pSelf->m_Controls.m_aLastData[!g_Config.m_ClDummy].m_Fire));
 	}
-	
 	pfnCallback(pResult, pCallbackUserData);
 	if(pResult->NumArguments())
 	{

@@ -1,16 +1,17 @@
-#ifndef EXT_H
-#define EXT_H
+#ifndef GAME_CLIENT_COMPONENTS_EXT_EXT_H
+#define GAME_CLIENT_COMPONENTS_EXT_EXT_H
 
 #include <engine/client/input.h>
 #include <engine/keys.h>
 #include <functional>
 #include <vector>
 
-class CEXT {
+class CEXT
+{
 	static std::vector<int> ms_vLeftKey;
 	static std::vector<int> ms_vRightKey;
 
-	static std::vector<int>* StrMapVector(const char *pStr);
+	static std::vector<int> *StrMapVector(const char *pStr);
 
 public:
 	static void AddMovementKey(const char *pStr, int KeyId);

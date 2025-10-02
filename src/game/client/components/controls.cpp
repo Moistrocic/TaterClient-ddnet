@@ -282,9 +282,8 @@ int CControls::SnapInput(int *pData)
 
 			m_aInputData[!g_Config.m_ClDummy] = *pDummyInput;
 			// EXTFixDummyHammer
-			if (g_Config.m_EXTFixDummyHammer == 1) {
+			if(g_Config.m_EXTFixDummyHammer == 1)
 				m_aLastData[!g_Config.m_ClDummy] = *pDummyInput;
-			}
 		}
 
 		if(g_Config.m_ClDummyControl)
